@@ -1,0 +1,9 @@
+# .env 파일 무시
+.env
+
+# Python 관련 파일 무시
+*.pyc
+__pycache__/
+
+# 가상 환경 폴더 무시
+venv/
