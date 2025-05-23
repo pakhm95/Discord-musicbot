@@ -7,3 +7,6 @@ __pycache__/
 
 # 가상 환경 폴더 무시
 venv/
+
+# Lib 폴더 무시
+Lib/
