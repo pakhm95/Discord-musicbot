@@ -52,7 +52,7 @@ async def 재생(ctx, *, 검색어):
         await ctx.send(" 먼저 음성 채널에 접속해주세요.")
         return
     
-    def fetch_info():
+    def fetch_info(query):
         ydl_opts = {
             'format': 'bestaudio[ext=m4a]/bestaudio/best',
             'quiet': True,
@@ -67,7 +67,7 @@ async def 재생(ctx, *, 검색어):
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
-                return ydl.extract_info(f"ytsearch:{검색어}", download=False)['entries'][0]
+                return ydl.extract_info(f"ytsearch:{query}", download=False)['entries'][0]
             except Exception:
                 return None
             
@@ -81,7 +81,8 @@ async def 재생(ctx, *, 검색어):
         
     
     url = info['url']
-    title = info['title']
+    # title = info['title']
+    title = info.get('title', '제목없음')
     music_queue.append((title, url))
         
     await ctx.send(f" 큐에 추가됨: **{title}**")
