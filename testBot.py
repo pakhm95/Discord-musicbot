@@ -54,19 +54,32 @@ async def 재생(ctx, *, 검색어):
     
     def fetch_info():
         ydl_opts = {
-            'format': 'bestaudio/best',
+            'format': 'bestaudio[ext=m4a]/bestaudio/best',
             'quiet': True,
             'default_search': 'ytsearch',
             'noplaylist': True,
             'extract_flat': False,
             'forceurl': True,
             'cachedir': False,
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            'no_warnings': True,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            return ydl.extract_info(f"ytsearch:{검색어}", download=False)['entries'][0]
+            try:
+                return ydl.extract_info(f"ytsearch:{검색어}", download=False)['entries'][0]
+            except Exception:
+                return None
+            
     
-    info = await asyncio.to_thread(lambda: fetch_info())
+    info = await asyncio.to_thread(lambda: fetch_info(검색어))
+    
+    # 재시도 로직
+    if not info or 'url' not in info:
+        await ctx.send("해당 영상을 재생할 수 없습니다. 다른 검색어를 시도해주세요.")
+        return
+        
+    
     url = info['url']
     title = info['title']
     music_queue.append((title, url))
