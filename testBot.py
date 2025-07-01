@@ -77,7 +77,7 @@ is_playing = False
 async def ensure_voice(ctx: commands.Context) -> Optional[discord.VoiceClient]:
     """유저가 있는 채널로 연결하거나 기존 연결 반환"""
     vc = ctx.voice_client
-    if vc and vc.is_connexted():
+    if vc and vc.is_connected():
         return vc
     if not ctx.author.voice:
         await ctx.send("먼저 음성 채널에 접속해주세요.")
