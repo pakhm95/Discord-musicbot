@@ -112,8 +112,22 @@ async def play_music(ctx: commands.context):
         "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
         "options": "-vn -loglevel quiet -bufsize 512k",
     }
-    vc.play(discord.FFmpegPCMAudio(url, **ff_opts), after=_after)
-    await ctx.send(f"🎶 지금 재생 중: **{current_song}**")
+    
+    try:
+        audio = discord.FFmpegPCMAudio(url, **ff_opts)
+        vc.play(audio, after=_after)
+        await ctx.send(f"🎶 지금 재생 중: **{current_song}**")
+    except Exception as e:
+        await ctx.send(f"⚠️ 음악 재생에 실패했습니다: `{e}`")
+        is_playing = False
+        current_song = None
+        # 다음 곡 재생 시도 (큐가 남아 있다면)
+        if music_queue:
+            await play_music(ctx)
+    
+    # 25..7.18 오류가 나서 코드 수정
+    # vc.play(discord.FFmpegPCMAudio(url, **ff_opts), after=_after)
+    # await ctx.send(f"🎶 지금 재생 중: **{current_song}**")
     
     # 기존 코드
     # vc = ctx.voice_client
