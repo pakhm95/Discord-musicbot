@@ -102,23 +102,23 @@ async def play_music(ctx: commands.context):
         return
     
     # 🎧 yt_dlp로 오디오 스트림 추출
-    def get_audio_url(url):
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'quiet': True,
-            'no_warnings': True,
-            'noplaylist': True,
-        }
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-            return info['url']
+    # def get_audio_url(url):
+    #     ydl_opts = {
+    #         'format': 'bestaudio/best',
+    #         'quiet': True,
+    #         'no_warnings': True,
+    #         'noplaylist': True,
+    #     }
+    #     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #         info = ydl.extract_info(url, download=False)
+    #         return info['url']
         
-    try:
-        stream_url = get_audio_url(url)
-    except Exception as e:
-        await ctx.send(f"❌ 음악 스트림을 불러오는 데 실패했습니다: {e}")
-        is_playing = False
-        return    
+    # try:
+    #     stream_url = get_audio_url(url)
+    # except Exception as e:
+    #     await ctx.send(f"❌ 음악 스트림을 불러오는 데 실패했습니다: {e}")
+    #     is_playing = False
+    #     return    
     
     def _after(_: Optional[Exception]):
         fut = asyncio.run_coroutine_threadsafe(play_music(ctx), bot.loop)
@@ -284,106 +284,3 @@ if __name__ == "__main__":
     load_settings()
     bot.run(token)   
     
-
-# @bot.command()
-# async def 재생(ctx, *, 검색어):
-#     global music_queue, is_playing
-    
-#     if not ctx.author.voice:
-#         await ctx.send(" 먼저 음성 채널에 접속해주세요.")
-#         return
-    
-#     def fetch_info(query):
-#         ydl_opts = {
-#             'format': 'bestaudio[ext=m4a]/bestaudio/best',
-#             'quiet': True,
-#             'default_search': 'ytsearch',
-#             'noplaylist': True,
-#             'extract_flat': False,
-#             'forceurl': True,
-#             'cachedir': False,
-#             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-#             'no_warnings': True,
-#         }
-        
-#         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-#             try:
-#                 return ydl.extract_info(f"ytsearch:{query}", download=False)['entries'][0]
-#             except Exception:
-#                 return None
-            
-    
-#     info = await asyncio.to_thread(lambda: fetch_info(검색어))
-    
-#     # 재시도 로직
-#     if not info or 'url' not in info:
-#         await ctx.send("해당 영상을 재생할 수 없습니다. 다른 검색어를 시도해주세요.")
-#         return
-        
-    
-#     url = info['url']
-#     # title = info['title']
-#     title = info.get('title', '제목없음')
-#     music_queue.append((title, url))
-        
-#     await ctx.send(f" 큐에 추가됨: **{title}**")
-    
-#     if not is_playing:
-#         await play_music(ctx)
-        
-# @bot.command()
-# async def 현재곡(ctx):
-#     if current_song:
-#         await ctx.send(f"지금 재생 중인 곡: **{current_song}**")
-#     else:
-#         await ctx.send("현재 재생 중인 노래가 없습니다.")
-        
-# @bot.command()
-# async def 목록(ctx):
-#     if music_queue:
-#         message = "대기 중인 노래 목록:\n"
-#         for i, (title, _) in enumerate(music_queue):
-#             message += f"{i+1}. {title}\n"
-#         await ctx.send(message)
-#     else:
-#         await ctx.send("재생 대기 중인 노래가 없습니다.")   
-   
-# @bot.command()
-# async def 스킵(ctx):
-#     vc = ctx.voice_client
-#     if not vc or not vc.is_playing():
-#         await ctx.send("현재 재생 중인 음악이 없습니다.")
-#         return
-
-#     await ctx.send(f"⏭️  **{current_song}** 을(를) 스킵합니다.")
-#     vc.stop()
-    
-#     await play_music(ctx)
-        
-# @bot.command()
-# async def 종료(ctx):
-#     if ctx.voice_client:
-#         await ctx.voice_client.disconnect()
-#         music_queue.clear()
-#         await ctx.send("봇이 음성 채널에서 나갔습니다.")
-#     else:
-#         await ctx.send("봇이 음성 채널에 없습니다.")
-        
-# @bot.command()
-# async def 명령어(ctx):
-#     help_text = """    
-#         🛠️ **사용 가능한 명령어 목록:**
-#         🎵 `!재생 [검색어]` - 유튜브에서 노래를 검색하여 재생합니다.
-#         📃 `!목록` - 현재 대기열에 있는 노래 목록을 보여줍니다.
-#         🎧 `!현재곡` - 지금 재생 중인 노래 정보를 보여줍니다.
-#         ⏭️ `!스킵` - 현재 재생 중인 노래를 스킵하고 다음 곡으로 넘어갑니다.
-#         🛑 `!종료` - 봇이 음성 채널에서 나가고 대기열을 초기화합니다.
-#         ❓ `!명령어` - 명령어 모음을 표시합니다.
-#     """
-#     await ctx.send(help_text)
-        
-# @bot.event
-# async def on_ready():
-#     print(f"✅ 로그인 완료: {bot.user}")   
-       
-# bot.run(token)
