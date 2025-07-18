@@ -101,6 +101,25 @@ async def play_music(ctx: commands.context):
         is_playing = False
         return
     
+    # 🎧 yt_dlp로 오디오 스트림 추출
+    def get_audio_url(url):
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'quiet': True,
+            'no_warnings': True,
+            'noplaylist': True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info['url']
+        
+    try:
+        stream_url = get_audio_url(url)
+    except Exception as e:
+        await ctx.send(f"❌ 음악 스트림을 불러오는 데 실패했습니다: {e}")
+        is_playing = False
+        return    
+    
     def _after(_: Optional[Exception]):
         fut = asyncio.run_coroutine_threadsafe(play_music(ctx), bot.loop)
         try:
